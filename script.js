@@ -1,4 +1,6 @@
-// MyPromise.js
+// MyPromiseWithTests.js
+const { expect } = require('chai');
+
 class MyPromise {
   constructor(executor) {
     this.state = 'pending';
@@ -77,4 +79,76 @@ class MyPromise {
   }
 }
 
-module.exports = MyPromise;
+describe('MyPromise', () => {
+  it('should resolve with value 10', () => {
+    const promise = new MyPromise((res, rej) => {
+      res(10);
+    });
+    expect(promise.state).to.equal('fulfilled');
+    expect(promise.value).to.equal(10);
+  });
+
+  it('should reject with error', () => {
+    const promise = new MyPromise((res, rej) => {
+      rej('error');
+    });
+    expect(promise.state).to.equal('rejected');
+    expect(promise.value).to.equal('error');
+  });
+
+  it('should handle chained then and catch', () => {
+    const promise = new MyPromise((res, rej) => {
+      res(10);
+    });
+    promise
+      .then(val => {
+        expect(val).to.equal(10);
+        return val + 10;
+      })
+      .then(val => {
+        expect(val).to.equal(20);
+        throw val + 10;
+      })
+      .then(
+        val => {
+          expect(val).to.equal(30);
+          return val + 10;
+        },
+        val => {
+          expect(val).to.equal(20);
+          return val + 20;
+        }
+      )
+      .then(val => {
+        expect(val).to.equal(40);
+        throw val + 10;
+      })
+      .catch(val => {
+        expect(val).to.equal(50);
+        return val + 10;
+      })
+      .then(val => {
+        expect(val).to.equal(60);
+      });
+  });
+
+  it('should execute chained then asynchronously', () => {
+    const promise = new MyPromise((res, rej) => {
+      res(10);
+    });
+    const newPromise = promise.then();
+    expect(newPromise).to.be.an.instanceOf(MyPromise);
+    expect(newPromise.value).to.equal(null);
+    expect(newPromise.state).to.equal('pending');
+  });
+
+  it('should return a pending promise when calling then without callbacks', () => {
+    const promise = new MyPromise((res, rej) => {
+      res(10);
+    });
+    const newPromise = promise.then();
+    expect(newPromise).to.be.an.instanceOf(MyPromise);
+    expect(newPromise.value).to.equal(10);
+    expect(newPromise.state).to.equal('fulfilled');
+  });
+});
