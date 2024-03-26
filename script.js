@@ -1,4 +1,4 @@
-//your JS code here. If required.
+// MyPromise.js
 class MyPromise {
   constructor(executor) {
     this.state = 'pending';
@@ -77,52 +77,4 @@ class MyPromise {
   }
 }
 
-// Sample Usage #1
-const promise = new MyPromise((res, rej) => {
-  res(10);
-});
-promise
-  .then(val => {
-    console.log(val);
-    return val + 10;
-  })
-  .then(val => {
-    console.log(val);
-    throw val + 10;
-  })
-  .then(
-    val => {
-      console.log(val);
-      return val + 10;
-    },
-    val => {
-      console.log('error: ' + val);
-      return val + 20;
-    }
-  )
-  .then(val => {
-    console.log(val);
-    throw val + 10;
-  })
-  .catch(val => {
-    console.log('error: ' + val);
-    return val + 10;
-  })
-  .then(val => {
-    console.log(val);
-  });
-console.log('end'); // this line runs before the then/catch chain.
-
-// Sample Usage #2
-const promise2 = new MyPromise((res, rej) => {
-  res(10);
-});
-promise2.then(val => {
-  console.log(val + 10);
-  return val + 10;
-});
-promise2.then(val => {
-  console.log(val + 5);
-  return val + 5;
-});
-console.log('end'); // this line runs before the then/catch chain.
+module.exports = MyPromise;
